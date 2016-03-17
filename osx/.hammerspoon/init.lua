@@ -18,22 +18,28 @@ local watcher = hs.fs.volume.new(function(eventType, relTable)
       log.i('Some other volume mounted: ' .. relTable.path)
     end
   elseif eventType == hs.fs.volume.willUnmount then
-    log.i(relTable.path .. ' unmounting...')
-    local dropboxPid = hs.application.get('com.getdropbox.dropbox'):pid()
-    if dropboxPid then
-      log.i('Killing dropbox pid ' .. dropboxPid .. ' first...')
-      hs.application.get(dropboxPid):kill()
-      dropboxPid = nil
-     else
-      log.i('No dropbox PID to kill')
-    end
-    local arqPid = hs.application.get('com.haystacksoftware.ArqAgent'):pid()
-    if arqPid then
-      log.i('Killing ArqAgent pid ' .. arqPid .. ' first...')
-      hs.application.get(arqPid):kill()
-      arqPid = nil
-     else
-      log.i('No ArqAgent PID to kill')
+    if relTable.path == '/Users/jonathan/Files' then
+      log.i(relTable.path .. ' unmounting...')
+      local dropboxApp = hs.application.get('com.getdropbox.dropbox')
+      if dropboxApp then
+        local dropboxPid = dropboxApp:pid()
+        log.i('Killing dropbox pid ' .. dropboxPid .. ' first...')
+        hs.application.get(dropboxPid):kill()
+        dropboxApp = nil
+        dropboxPid = nil
+       else
+        log.i('No dropbox PID to kill')
+      end
+      local arqApp = hs.application.get('com.haystacksoftware.ArqAgent')
+      if arqApp then
+        local arqPid = arqApp:pid()
+        log.i('Killing ArqAgent pid ' .. arqPid .. ' first...')
+        hs.application.get(arqPid):kill()
+        arqApp = nil
+        arqPid = nil
+       else
+        log.i('No ArqAgent PID to kill')
+      end
     end
   end
 end):start()
